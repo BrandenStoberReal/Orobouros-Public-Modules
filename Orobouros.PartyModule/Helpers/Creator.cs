@@ -21,7 +21,8 @@ public class Creator : HttpAPIAsset
         "gumroad",
         "boosty",
         "onlyfans",
-        "fansly"
+        "fansly",
+        "candfans"
     };
 
     /// <summary>
