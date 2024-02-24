@@ -34,55 +34,37 @@ public class Creator : HttpAPIAsset
 
         // HTTP init
         var response = HttpManager.GET(url);
-        if (response == null)
+
+        // Load HTML
+        var responseDocument = new HtmlDocument();
+        responseDocument.LoadHtml(response.Content.ReadAsStringAsync().Result);
+        LandingPage = responseDocument;
+
+        // Populate name variable
+        var creatorNameNode = responseDocument.DocumentNode.SelectNodes("//span[@itemprop]").FirstOrDefault();
+        Name = creatorNameNode?.InnerText;
+
+        // Identify service
+        if (servicesList.Any(url.Contains))
         {
-            // No response was recieved and something went very wrong
-            this.Errored = true;
-            this.ResponseCode = HttpStatusCode.MethodNotAllowed;
-        }
-        else if (response.Errored == true)
-        {
-            // Response was recieved but failed
-            this.Errored = true;
-            this.ResponseCode = response.ResponseCode;
+            Service = servicesList.Find(url.Contains);
         }
         else
         {
-            // Successful HTTP fetch
-            this.Errored = false;
-            this.ResponseCode = response.ResponseCode;
+            // Unsupported service
+            Service = null;
+        }
 
-            // Load HTML
-            var responseDocument = new HtmlDocument();
-            responseDocument.LoadHtml(response.Content.ReadAsStringAsync().Result);
-            LandingPage = responseDocument;
-
-            // Populate name variable
-            var creatorNameNode = responseDocument.DocumentNode.SelectNodes("//span[@itemprop]").FirstOrDefault();
-            Name = creatorNameNode?.InnerText;
-
-            // Identify service
-            if (servicesList.Any(url.Contains))
-            {
-                Service = servicesList.Find(url.Contains);
-            }
-            else
-            {
-                // Unsupported service
-                Service = null;
-            }
-
-            // Fetch domain URL
-            var reg = new Regex("https://[A-Za-z0-9]+\\.su");
-            var regMatch = reg.Match(url);
-            if (regMatch.Success)
-            {
-                PartyDomain = regMatch.Value;
-            }
-            else
-            {
-                PartyDomain = null;
-            }
+        // Fetch domain URL
+        var reg = new Regex("https://[A-Za-z0-9]+\\.su");
+        var regMatch = reg.Match(url);
+        if (regMatch.Success)
+        {
+            PartyDomain = regMatch.Value;
+        }
+        else
+        {
+            PartyDomain = null;
         }
     }
 

@@ -27,7 +27,7 @@ namespace Orobouros.PartyModule.Helpers
         public static List<Post>? ScrapePage(Creator creator, int page, int numberOfPostsToGet)
         {
             var postUrls = new List<Post>();
-            HttpAPIAsset asset = HttpManager.GET(creator.URL + $"o?{page * 50}");
+            HttpAPIAsset asset = HttpManager.GET(creator.URL + $"?o={page * 50}");
             if (asset.Errored || asset.Successful == false)
             {
                 return null;
@@ -52,7 +52,8 @@ namespace Orobouros.PartyModule.Helpers
                         if (count >= numberOfPostsToGet) // We want to cut off the loop when the threshold is reached
                             break;
 
-                        HtmlNode? linkNode = post.ChildNodes.FirstOrDefault(x => x.Name == "a" && x.Attributes["href"] != null); // Find first child node with a link attribute (only "a" nodes here)
+                        DebugManager.WriteToDebugLog("[+] Post HTML type: " + post.Name);
+                        HtmlNode? linkNode = post.ChildNodes.FirstOrDefault(x => x.Name == "a" && x.Attributes["href"] != null); // Find first child node with a link attribute(only "a" nodes here)
 
                         // Add URL to the list
                         Post posty = new Post();
