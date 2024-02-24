@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34607.119
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orobouros.PartyModule", "Orobouros.PartyModule\Orobouros.PartyModule.csproj", "{67CD9D0C-8099-423F-AA4D-C41915D801CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{67CD9D0C-8099-423F-AA4D-C41915D801CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67CD9D0C-8099-423F-AA4D-C41915D801CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67CD9D0C-8099-423F-AA4D-C41915D801CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67CD9D0C-8099-423F-AA4D-C41915D801CD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4FAA9446-C609-461B-A9CB-B1018903AD37}
+	EndGlobalSection
+EndGlobal
