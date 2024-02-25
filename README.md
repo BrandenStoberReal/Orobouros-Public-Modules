@@ -1,1 +1,1 @@
-# Orobouros.PartyModule
+# Public Orobouros Plugins
