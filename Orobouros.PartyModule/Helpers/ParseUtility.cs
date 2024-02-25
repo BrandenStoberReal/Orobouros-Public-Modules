@@ -127,7 +127,7 @@ namespace Orobouros.PartyModule.Helpers
 
                         // Files
                         List<HtmlNode>? filesNodes = HtmlManager.SelectNodesByClass(responseDocument, "post__files", "div");
-                        HtmlNode? filesNode = contentNodes?.FirstOrDefault();
+                        HtmlNode? filesNode = filesNodes?.FirstOrDefault();
                         if (filesNode != null)
                         {
                             List<HtmlNode> files = filesNode.Descendants().Where(x => x.Attributes["href"] != null && x.Attributes["download"] != null).ToList();
@@ -157,7 +157,7 @@ namespace Orobouros.PartyModule.Helpers
 
                         // Attachment posts
                         List<HtmlNode>? attachmentNodes = HtmlManager.SelectNodesByClass(responseDocument, "post__attachments", "ul");
-                        HtmlNode? attachmentNode = contentNodes?.FirstOrDefault();
+                        HtmlNode? attachmentNode = attachmentNodes?.FirstOrDefault();
                         if (attachmentNode != null)
                         {
                             List<HtmlNode> rawAttachments = attachmentNode.Descendants().Where(x => x.Attributes["href"] != null && x.Attributes["download"] != null).ToList();
