@@ -132,7 +132,7 @@ public class Creator : HttpAPIAsset
             HttpAPIAsset profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value);
             if (!profilePicData.Errored)
             {
-                using var ms = profilePicData.Content.ReadAsStream();
+                using var ms = profilePicData.Content.ReadAsStreamAsync().Result;
                 ProfilePicture = Image.FromStream(ms);
                 return Image.FromStream(ms);
             }
@@ -174,7 +174,7 @@ public class Creator : HttpAPIAsset
             HttpAPIAsset profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value);
             if (!profilePicData.Errored)
             {
-                using var ms = profilePicData.Content.ReadAsStream();
+                using var ms = profilePicData.Content.ReadAsStreamAsync().Result;
                 ProfilePicture = Image.FromStream(ms);
                 return Image.FromStream(ms);
             }

@@ -57,7 +57,11 @@ namespace Orobouros.PartyModule.Helpers
 
                         // Add URL to the list
                         Post posty = new Post();
-                        posty.Author = creator.Name;
+                        Author auth = new Author();
+                        auth.Username = creator.Name;
+                        auth.URL = creator.URL;
+                        auth.ProfilePicture = creator.GetProfilePictureURL();
+                        posty.Author = auth;
                         posty.URL = creator.PartyDomain + linkNode?.Attributes["href"].Value;
 
                         DebugManager.WriteToDebugLog("[+] Post URL: " + posty.URL);
@@ -178,6 +182,30 @@ namespace Orobouros.PartyModule.Helpers
 
                                 filey.Binary = HttpManager.GET(filey.URL).Content.ReadAsStream();
                                 posty.Attachments.Add(filey);
+                            }
+                        }
+
+                        // Comments
+                        List<HtmlNode>? commentNodes = HtmlManager.SelectNodesByClass(responseDocument, "post__comments ", "div");
+                        HtmlNode? commentNode = contentNodes?.FirstOrDefault();
+                        if (commentNode != null)
+                        {
+                            List<HtmlNode> rawComments = HtmlManager.FetchChildNodes(attachmentNode);
+                            foreach (var comment in rawComments)
+                            {
+                                HtmlNode? HeaderNode = comment.ChildNodes.Where(x => x.HasClass("comment__header")).FirstOrDefault();
+                                HtmlNode? BodyNode = comment.ChildNodes.Where(x => x.HasClass("comment__body")).FirstOrDefault();
+                                HtmlNode? FooterNode = comment.ChildNodes.Where(x => x.HasClass("comment__footer")).FirstOrDefault();
+
+                                Comment comm = new Comment();
+                                Author authy = new Author();
+                                authy.Username = HeaderNode.ChildNodes.First(x => x.Name == "a").InnerText;
+                                comm.Author = authy;
+                                comm.ParentPost = posty;
+                                comm.Content = BodyNode.ChildNodes.First(x => x.Name == "p").InnerText;
+                                comm.PostTime = DateTime.ParseExact(FooterNode.ChildNodes.First(x => x.Name == "time").InnerText, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+                                posty.Comments.Add(comm);
                             }
                         }
                         postUrls.Add(posty);
