@@ -189,17 +189,40 @@ namespace Orobouros.PartyModule.Helpers
                         List<HtmlNode> rawComments = HtmlManager.SelectNodesByClass(responseDocument, "comment", "article");
                         foreach (var comment in rawComments)
                         {
+                            // Fetch text container nodes
                             HtmlNode? HeaderNode = comment.ChildNodes.First(x => x.HasClass("comment__header") && x.Name == "header");
                             HtmlNode? BodyNode = comment.ChildNodes.First(x => x.HasClass("comment__body") && x.Name == "section");
                             HtmlNode? FooterNode = comment.ChildNodes.First(x => x.HasClass("comment__footer") && x.Name == "footer");
 
+                            // Don't add comment if containers aren't found
+                            if (HeaderNode == null || BodyNode == null || FooterNode == null)
+                            {
+                                continue;
+                            }
+
+                            // Select children with required information
+                            HtmlNode? UsernameNode = HeaderNode.ChildNodes.First(x => x.Name == "a");
+                            HtmlNode? DescriptionNode = BodyNode.ChildNodes.First(x => x.Name == "p");
+                            HtmlNode? DateNode = FooterNode.ChildNodes.First(x => x.Name == "time");
+
+                            // Don't add comment if information nodes aren't found
+                            if (UsernameNode == null || DescriptionNode == null || DateNode == null)
+                            {
+                                continue;
+                            }
+
+                            // Create comment class
                             Comment comm = new Comment();
+
+                            // Build comment author
                             Author authy = new Author();
-                            authy.Username = HeaderNode.ChildNodes.First(x => x.Name == "a").InnerText;
+                            authy.Username = UsernameNode.InnerText;
+
+                            // Assign comment values
                             comm.Author = authy;
                             comm.ParentPost = posty;
-                            comm.Content = BodyNode.ChildNodes.First(x => x.Name == "p").InnerText;
-                            comm.PostTime = DateTime.ParseExact(FooterNode.ChildNodes.First(x => x.Name == "time").InnerText.Replace("\n", "").Trim(), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                            comm.Content = DescriptionNode.InnerText;
+                            comm.PostTime = DateTime.ParseExact(DateNode.InnerText.Replace("\n", "").Trim(), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
                             posty.Comments.Add(comm);
                         }
