@@ -187,15 +187,15 @@ namespace Orobouros.PartyModule.Helpers
 
                         // Comments
                         List<HtmlNode>? commentNodes = HtmlManager.SelectNodesByClass(responseDocument, "post__comments ", "div");
-                        HtmlNode? commentNode = contentNodes?.FirstOrDefault();
+                        HtmlNode? commentNode = commentNodes?.FirstOrDefault();
                         if (commentNode != null)
                         {
-                            List<HtmlNode> rawComments = HtmlManager.FetchChildNodes(attachmentNode);
+                            List<HtmlNode> rawComments = HtmlManager.FetchChildNodes(commentNode);
                             foreach (var comment in rawComments)
                             {
-                                HtmlNode? HeaderNode = comment.ChildNodes.Where(x => x.HasClass("comment__header")).FirstOrDefault();
-                                HtmlNode? BodyNode = comment.ChildNodes.Where(x => x.HasClass("comment__body")).FirstOrDefault();
-                                HtmlNode? FooterNode = comment.ChildNodes.Where(x => x.HasClass("comment__footer")).FirstOrDefault();
+                                HtmlNode? HeaderNode = comment.ChildNodes.First(x => x.HasClass("comment__header") && x.Name == "header");
+                                HtmlNode? BodyNode = comment.ChildNodes.First(x => x.HasClass("comment__body") && x.Name == "section");
+                                HtmlNode? FooterNode = comment.ChildNodes.First(x => x.HasClass("comment__footer") && x.Name == "footer");
 
                                 Comment comm = new Comment();
                                 Author authy = new Author();
