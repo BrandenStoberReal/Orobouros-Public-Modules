@@ -113,7 +113,7 @@ namespace Orobouros.PartyModule
                 {
                     DebugManager.WriteToDebugLog("Scraping final page...");
                     DebugManager.WriteToDebugLog($"Parsing last page with {leftoverPosts} posts");
-                    List<Post> leftoverPosties = ParseUtility.ScrapePage(creator, pages, leftoverPosts);
+                    List<Post>? leftoverPosties = ParseUtility.ScrapePage(creator, pages, leftoverPosts);
                     if (leftoverPosties == null)
                     {
                         DebugManager.WriteToDebugLog("ERROR: A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
