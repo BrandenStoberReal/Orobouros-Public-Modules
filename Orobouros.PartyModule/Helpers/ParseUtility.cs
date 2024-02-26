@@ -79,7 +79,7 @@ namespace Orobouros.PartyModule.Helpers
                         Regex postIDFinder = new Regex("/post/(.*)");
                         Match postIDMatch = postIDFinder.Match(compiledPost.URL);
                         string postId = postIDMatch.Groups[1].Value;
-                        compiledPost.Id = int.Parse(postId).ToString();
+                        compiledPost.Id = Int64.Parse(postId).ToString();
 
                         // Fetch post title
                         HtmlNode? titleParent = postDocument.DocumentNode.Descendants().FirstOrDefault(x => x.HasClass("post__title") && x.Name == "h1");
@@ -145,6 +145,7 @@ namespace Orobouros.PartyModule.Helpers
                                 HttpAPIAsset? fileRawDataAsset = HttpManager.GET(file.URL);
                                 if (!fileRawDataAsset.Successful || fileRawDataAsset.Errored)
                                 {
+                                    DebugManager.WriteToDebugLog($"File data failed to be fetched! Status code: {fileRawDataAsset.ResponseCode}. This file has been skipped.");
                                     continue;
                                 }
 
@@ -184,6 +185,7 @@ namespace Orobouros.PartyModule.Helpers
                                 HttpAPIAsset? attachmentRawDataAsset = HttpManager.GET(attachment.URL);
                                 if (!attachmentRawDataAsset.Successful || attachmentRawDataAsset.Errored)
                                 {
+                                    DebugManager.WriteToDebugLog($"Attachment data failed to be fetched! Status code: {attachmentRawDataAsset.ResponseCode}. This attachment has been skipped.");
                                     continue;
                                 }
 
