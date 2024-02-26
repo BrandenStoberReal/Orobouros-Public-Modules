@@ -127,6 +127,7 @@ namespace Orobouros.PartyModule.Helpers
                                 Attachment file = new Attachment();
                                 file.URL = fileobj.Attributes["href"].Value;
                                 file.Name = StringManager.SanitizeFile(HttpUtility.UrlDecode(fileobj.Attributes["download"].Value));
+                                file.ParentPost = compiledPost;
 
                                 if (UniAssemblyInfo.IsVideo(file.Name))
                                 {
@@ -167,6 +168,7 @@ namespace Orobouros.PartyModule.Helpers
                                 Attachment attachment = new Attachment();
                                 attachment.URL = attachmentobj.Attributes["href"].Value;
                                 attachment.Name = StringManager.SanitizeFile(HttpUtility.UrlDecode(attachmentobj.Attributes["download"].Value));
+                                attachment.ParentPost = compiledPost;
 
                                 if (UniAssemblyInfo.IsVideo(attachment.Name))
                                 {
