@@ -96,7 +96,7 @@ namespace Orobouros.PartyModule.Helpers
                         // Handle empty post titles
                         if (postTitle == "Untitled")
                         {
-                            postTitle = postTitle + " (Post ID " + compiledPost.Id + ")";
+                            postTitle = postTitle + " (Post ID - " + compiledPost.Id + ")";
                         }
 
                         compiledPost.Title = postTitle.Trim();
