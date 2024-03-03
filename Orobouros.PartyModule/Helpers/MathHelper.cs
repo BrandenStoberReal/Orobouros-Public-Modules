@@ -1,6 +1,5 @@
 ﻿// ReSharper disable PossibleLossOfFraction
 
-using HtmlAgilityPack;
 using Orobouros.Managers;
 
 namespace Orobouros.PartyModule.Helpers;

@@ -1,18 +1,9 @@
-﻿using FlyingSubmarineDLL.Attributes;
-using Orobouros.Attributes;
+﻿using Orobouros.Attributes;
 using Orobouros.Bases;
-using Orobouros.Tools;
-using System.Text.RegularExpressions;
-using System;
-using static Orobouros.UniAssemblyInfo;
-using Orobouros.Tools.Web;
-using Orobouros.PartyModule.Helpers;
 using Orobouros.Managers;
-using HtmlAgilityPack;
-using System.Globalization;
-using System.Net.Mail;
-using System.Net;
-using System.Web;
+using Orobouros.PartyModule.Helpers;
+using Orobouros.Tools.Web;
+using static Orobouros.UniAssemblyInfo;
 using Attachment = Orobouros.Tools.Web.Attachment;
 
 namespace Orobouros.PartyModule

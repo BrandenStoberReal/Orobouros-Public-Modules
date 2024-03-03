@@ -2,7 +2,6 @@
 using Orobouros.Bases;
 using Orobouros.Managers;
 using System.Drawing;
-using System.Net;
 using System.Text.RegularExpressions;
 
 namespace Orobouros.PartyModule;
