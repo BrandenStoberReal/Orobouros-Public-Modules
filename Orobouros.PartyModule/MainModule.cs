@@ -49,7 +49,7 @@ namespace Orobouros.PartyModule
             var Posts = new List<Post>();
 
             Creator creator = new Creator(parameters.URL);
-            DebugManager.WriteToDebugLog("[+] Creator: " + creator.Name);
+            LoggingManager.WriteToDebugLog("[+] Creator: " + creator.Name);
 
             // Page data vars
             var pagesAndPosts = MathHelper.DoPageMath(creator, parameters.ScrapeInstances);
@@ -60,21 +60,21 @@ namespace Orobouros.PartyModule
             // Subposts media type
             if (parameters.RequestedContent.Count == 1 && parameters.RequestedContent.First() == ModuleContent.Subposts)
             {
-                DebugManager.WriteToDebugLog("[+] Subposts requested!");
+                LoggingManager.WriteToDebugLog("[+] Subposts requested!");
 
                 // Return subposts Full Page Scraper
                 if (singlePage)
                 {
                     // Used if only grabbing the first page
-                    DebugManager.WriteToDebugLog("Scraping single page...");
+                    LoggingManager.WriteToDebugLog("Scraping single page...");
                     List<Post>? postsList = ParseUtility.ScrapePage(creator, 0, leftoverPosts);
                     if (postsList == null)
                     {
-                        DebugManager.WriteToDebugLog("ERROR: A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
+                        LoggingManager.WriteToDebugLog("ERROR: A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
                         return null;
                     }
                     Posts = Posts.Concat(postsList).ToList();
-                    DebugManager.WriteToDebugLog("Scraped " + leftoverPosts + " posts");
+                    LoggingManager.WriteToDebugLog("Scraped " + leftoverPosts + " posts");
                 }
                 else
                 {
@@ -82,12 +82,12 @@ namespace Orobouros.PartyModule
                     bool error = false;
                     for (var i = 0; i < pages; i++)
                     {
-                        DebugManager.WriteToDebugLog("Scraping Page #" + (i + 1) + "/" + pages + "...");
-                        DebugManager.WriteToDebugLog($"Page #{i + 1} out of {pages} parsing");
+                        LoggingManager.WriteToDebugLog("Scraping Page #" + (i + 1) + "/" + pages + "...");
+                        LoggingManager.WriteToDebugLog($"Page #{i + 1} out of {pages} parsing");
                         List<Post>? postList = ParseUtility.ScrapePage(creator, i, 50);
                         if (postList == null)
                         {
-                            DebugManager.WriteToDebugLog("ERROR: A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
+                            LoggingManager.WriteToDebugLog("ERROR: A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
                             error = true;
                             break;
                         }
@@ -102,12 +102,12 @@ namespace Orobouros.PartyModule
                 // Partial page scraper, used for scraping the final page from the series
                 if (leftoverPosts > 0 && !singlePage)
                 {
-                    DebugManager.WriteToDebugLog("Scraping final page...");
-                    DebugManager.WriteToDebugLog($"Parsing last page with {leftoverPosts} posts");
+                    LoggingManager.WriteToDebugLog("Scraping final page...");
+                    LoggingManager.WriteToDebugLog($"Parsing last page with {leftoverPosts} posts");
                     List<Post>? leftoverPosties = ParseUtility.ScrapePage(creator, pages, leftoverPosts);
                     if (leftoverPosties == null)
                     {
-                        DebugManager.WriteToDebugLog("ERROR: A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
+                        LoggingManager.WriteToDebugLog("ERROR: A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
                         return null;
                     }
                     Posts = Posts.Concat(leftoverPosties).ToList();
