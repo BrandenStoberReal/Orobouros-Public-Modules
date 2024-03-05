@@ -49,7 +49,7 @@ namespace Orobouros.PartyModule
             var Posts = new List<Post>();
 
             Creator creator = new Creator(parameters.URL);
-            LoggingManager.WriteToDebugLog("[+] Creator: " + creator.Name);
+            LoggingManager.WriteToDebugLog("Creator: " + creator.Name);
 
             // Page data vars
             var pagesAndPosts = MathHelper.DoPageMath(creator, parameters.ScrapeInstances);
@@ -60,7 +60,7 @@ namespace Orobouros.PartyModule
             // Subposts media type
             if (parameters.RequestedContent.Count == 1 && parameters.RequestedContent.First() == ModuleContent.Subposts)
             {
-                LoggingManager.WriteToDebugLog("[+] Subposts requested!");
+                LoggingManager.WriteToDebugLog("Subposts requested!");
 
                 // Return subposts Full Page Scraper
                 if (singlePage)

@@ -25,13 +25,13 @@ namespace Orobouros.PartyModule.Helpers
             {
                 return null;
             }
-            LoggingManager.WriteToDebugLog("[+] Page asset returned code " + asset.ResponseCode);
-            LoggingManager.WriteToDebugLog("[+] Creator URL: " + creator.URL);
+            LoggingManager.WriteToDebugLog("Page asset returned code " + asset.ResponseCode);
+            LoggingManager.WriteToDebugLog("Creator URL: " + creator.URL);
 
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(asset.Content.ReadAsStringAsync().Result);
 
-            LoggingManager.WriteToDebugLog("[+] HTML Document initialized: " + htmlDoc.Text.Length + " characters");
+            LoggingManager.WriteToDebugLog("HTML Document initialized: " + htmlDoc.Text.Length + " characters");
 
             // Parsing
             List<HtmlNode>? postsContainers = HtmlManager.SelectNodesByClass(htmlDoc, "card-list__items", "div"); // Fetch the container that holds the posts
@@ -46,7 +46,7 @@ namespace Orobouros.PartyModule.Helpers
                         if (count >= numberOfPostsToGet) // We want to cut off the loop when the threshold is reached
                             break;
 
-                        LoggingManager.WriteToDebugLog("[+] Post HTML type: " + postobj.Name);
+                        LoggingManager.WriteToDebugLog("Post HTML type: " + postobj.Name);
                         HtmlNode? postUrlNode = postobj.ChildNodes.FirstOrDefault(x => x.Name == "a" && x.Attributes["href"] != null); // Find first child node with a link attribute(only "a" nodes here)
 
                         // Add URL to the list
@@ -58,7 +58,7 @@ namespace Orobouros.PartyModule.Helpers
                         compiledPost.Author = postAuthor;
                         compiledPost.URL = creator.PartyDomain + postUrlNode?.Attributes["href"].Value;
 
-                        LoggingManager.WriteToDebugLog("[+] Post URL: " + compiledPost.URL);
+                        LoggingManager.WriteToDebugLog("Post URL: " + compiledPost.URL);
 
                         // Perform HTTP request
                         HttpAPIAsset? postWebResponse = HttpManager.GET(compiledPost.URL);
@@ -72,23 +72,23 @@ namespace Orobouros.PartyModule.Helpers
                         HtmlDocument postDocument = new HtmlDocument();
                         postDocument.LoadHtml(postWebResponse.Content.ReadAsStringAsync().Result);
 
-                        LoggingManager.WriteToDebugLog("[+] Post HTML Document return status code " + postWebResponse.ResponseCode);
-                        LoggingManager.WriteToDebugLog("[+] Post HTML Document Length: " + postDocument.Text.Length);
+                        LoggingManager.WriteToDebugLog("Post HTML Document return status code " + postWebResponse.ResponseCode);
+                        LoggingManager.WriteToDebugLog("Post HTML Document Length: " + postDocument.Text.Length);
 
-                        LoggingManager.WriteToDebugLog("[+] Scraping post ID...");
+                        LoggingManager.WriteToDebugLog("Scraping post ID...");
                         // Fetch post ID
                         Regex postIDFinder = new Regex("/post/(.*)");
                         Match postIDMatch = postIDFinder.Match(compiledPost.URL);
                         string postId = postIDMatch.Groups[1].Value;
                         compiledPost.Id = Int64.Parse(postId).ToString();
 
-                        LoggingManager.WriteToDebugLog("[+] Scraping post title...");
+                        LoggingManager.WriteToDebugLog("Scraping post title...");
                         // Fetch post title
                         HtmlNode? titleParent = postDocument.DocumentNode.Descendants().FirstOrDefault(x => x.HasClass("post__title") && x.Name == "h1");
                         HtmlNode? titleSpan = titleParent?.ChildNodes.FirstOrDefault(x => x.Name == "span");
                         string? postTitle = HttpUtility.HtmlDecode(titleSpan?.InnerText);
 
-                        LoggingManager.WriteToDebugLog("[+] Scraping post upload date...");
+                        LoggingManager.WriteToDebugLog("Scraping post upload date...");
                         // Fetch post upload date
                         HtmlNode? dateParent = postDocument.DocumentNode.Descendants().FirstOrDefault(x => x.HasClass("post__published") && x.Name == "div");
                         HtmlNode? divChild = dateParent?.ChildNodes.FirstOrDefault(x => x.Name == "div");
@@ -96,7 +96,7 @@ namespace Orobouros.PartyModule.Helpers
                         DateTime uploadDate = DateTime.ParseExact(TimeText, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                         compiledPost.UploadDate = uploadDate;
 
-                        LoggingManager.WriteToDebugLog("[+] Verifying post title integrity...");
+                        LoggingManager.WriteToDebugLog("Verifying post title integrity...");
                         // Handle empty post titles
                         if (postTitle == "Untitled")
                         {
@@ -110,7 +110,7 @@ namespace Orobouros.PartyModule.Helpers
                         HtmlNode? contentNode = contentNodes?.FirstOrDefault();
                         if (contentNode != null)
                         {
-                            LoggingManager.WriteToDebugLog("[+] Scraping post description...");
+                            LoggingManager.WriteToDebugLog("Scraping post description...");
                             // Content stuff
                             var scrDesc = contentNode.InnerText;
                             if (scrDesc.StartsWith("\n"))
@@ -126,7 +126,7 @@ namespace Orobouros.PartyModule.Helpers
                         HtmlNode? filesNode = filesNodes?.FirstOrDefault();
                         if (filesNode != null)
                         {
-                            LoggingManager.WriteToDebugLog("[+] Scraping post files...");
+                            LoggingManager.WriteToDebugLog("Scraping post files...");
                             List<HtmlNode> files = filesNode.Descendants().Where(x => x.Attributes["href"] != null && x.Attributes["download"] != null).ToList();
                             foreach (HtmlNode fileobj in files)
                             {
@@ -148,7 +148,7 @@ namespace Orobouros.PartyModule.Helpers
                                     file.AttachmentType = UniAssemblyInfo.AttachmentContent.GenericFile;
                                 }
 
-                                LoggingManager.WriteToDebugLog($"[+] Downloading raw binary for file {file.Name}...");
+                                LoggingManager.WriteToDebugLog($"Downloading raw binary for file {file.Name}...");
                                 // Fetch file raw binary data
                                 HttpAPIAsset? fileRawDataAsset = HttpManager.GET(file.URL);
                                 if (!fileRawDataAsset.Successful || fileRawDataAsset.Errored)
@@ -157,7 +157,7 @@ namespace Orobouros.PartyModule.Helpers
                                     continue;
                                 }
 
-                                LoggingManager.WriteToDebugLog("[+] Converting raw file binary to stream...");
+                                LoggingManager.WriteToDebugLog("Converting raw file binary to stream...");
                                 // Convert to stream & package
                                 Stream fileRawData = fileRawDataAsset.Content.ReadAsStreamAsync().Result;
                                 file.Binary = fileRawData;
@@ -170,7 +170,7 @@ namespace Orobouros.PartyModule.Helpers
                         HtmlNode? attachmentNode = attachmentNodes?.FirstOrDefault();
                         if (attachmentNode != null)
                         {
-                            LoggingManager.WriteToDebugLog("[+] Scraping post attachments...");
+                            LoggingManager.WriteToDebugLog("Scraping post attachments...");
                             List<HtmlNode> rawAttachments = attachmentNode.Descendants().Where(x => x.Attributes["href"] != null && x.Attributes["download"] != null).ToList();
                             foreach (HtmlNode attachmentobj in rawAttachments)
                             {
@@ -192,7 +192,7 @@ namespace Orobouros.PartyModule.Helpers
                                     attachment.AttachmentType = UniAssemblyInfo.AttachmentContent.GenericFile;
                                 }
 
-                                LoggingManager.WriteToDebugLog($"[+] Downloading raw binary for attachment {attachment.Name}...");
+                                LoggingManager.WriteToDebugLog($"Downloading raw binary for attachment {attachment.Name}...");
                                 // Fetch file raw binary data
                                 HttpAPIAsset? attachmentRawDataAsset = HttpManager.GET(attachment.URL);
                                 if (!attachmentRawDataAsset.Successful || attachmentRawDataAsset.Errored)
@@ -201,7 +201,7 @@ namespace Orobouros.PartyModule.Helpers
                                     continue;
                                 }
 
-                                LoggingManager.WriteToDebugLog("[+] Converting raw attachment binary to stream...");
+                                LoggingManager.WriteToDebugLog("Converting raw attachment binary to stream...");
                                 // Convert to stream & package
                                 Stream attachmentRawData = attachmentRawDataAsset.Content.ReadAsStreamAsync().Result;
                                 attachment.Binary = attachmentRawData;
@@ -213,7 +213,7 @@ namespace Orobouros.PartyModule.Helpers
                         List<HtmlNode> rawComments = HtmlManager.SelectNodesByClass(postDocument, "comment", "article");
                         foreach (var comment in rawComments)
                         {
-                            LoggingManager.WriteToDebugLog("[+] Scraping post comment...");
+                            LoggingManager.WriteToDebugLog("Scraping post comment...");
                             // Fetch text container nodes
                             HtmlNode? HeaderNode = comment.ChildNodes.First(x => x.HasClass("comment__header") && x.Name == "header");
                             HtmlNode? BodyNode = comment.ChildNodes.First(x => x.HasClass("comment__body") && x.Name == "section");
@@ -222,7 +222,7 @@ namespace Orobouros.PartyModule.Helpers
                             // Don't add comment if containers aren't found
                             if (HeaderNode == null || BodyNode == null || FooterNode == null)
                             {
-                                LoggingManager.WriteToDebugLog("[+] Comment had invalid HTML, skipping...");
+                                LoggingManager.WriteToDebugLog("Comment had invalid HTML, skipping...");
                                 continue;
                             }
 
@@ -234,7 +234,7 @@ namespace Orobouros.PartyModule.Helpers
                             // Don't add comment if information nodes aren't found
                             if (UsernameNode == null || DescriptionNode == null || DateNode == null)
                             {
-                                LoggingManager.WriteToDebugLog("[+] Comment has no proper children, skipping...");
+                                LoggingManager.WriteToDebugLog("Comment has no proper children, skipping...");
                                 continue;
                             }
 
