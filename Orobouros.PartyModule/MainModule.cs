@@ -3,7 +3,7 @@ using Orobouros.Bases;
 using Orobouros.Managers;
 using Orobouros.PartyModule.Helpers;
 using Orobouros.Tools.Web;
-using static Orobouros.UniAssemblyInfo;
+using static Orobouros.OrobourosInformation;
 using Attachment = Orobouros.Tools.Web.Attachment;
 
 namespace Orobouros.PartyModule

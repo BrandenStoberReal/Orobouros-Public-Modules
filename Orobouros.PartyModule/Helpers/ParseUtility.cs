@@ -135,17 +135,17 @@ namespace Orobouros.PartyModule.Helpers
                                 file.Name = StringManager.SanitizeFile(HttpUtility.UrlDecode(fileobj.Attributes["download"].Value));
                                 file.ParentPost = compiledPost;
 
-                                if (UniAssemblyInfo.IsVideo(file.Name))
+                                if (OrobourosInformation.IsVideo(file.Name))
                                 {
-                                    file.AttachmentType = UniAssemblyInfo.AttachmentContent.Video;
+                                    file.AttachmentType = OrobourosInformation.AttachmentContent.Video;
                                 }
-                                else if (UniAssemblyInfo.IsImage(file.Name))
+                                else if (OrobourosInformation.IsImage(file.Name))
                                 {
-                                    file.AttachmentType = UniAssemblyInfo.AttachmentContent.Image;
+                                    file.AttachmentType = OrobourosInformation.AttachmentContent.Image;
                                 }
                                 else
                                 {
-                                    file.AttachmentType = UniAssemblyInfo.AttachmentContent.GenericFile;
+                                    file.AttachmentType = OrobourosInformation.AttachmentContent.GenericFile;
                                 }
 
                                 LoggingManager.WriteToDebugLog($"Downloading raw binary for file {file.Name}...");
@@ -179,17 +179,17 @@ namespace Orobouros.PartyModule.Helpers
                                 attachment.Name = StringManager.SanitizeFile(HttpUtility.UrlDecode(attachmentobj.Attributes["download"].Value));
                                 attachment.ParentPost = compiledPost;
 
-                                if (UniAssemblyInfo.IsVideo(attachment.Name))
+                                if (OrobourosInformation.IsVideo(attachment.Name))
                                 {
-                                    attachment.AttachmentType = UniAssemblyInfo.AttachmentContent.Video;
+                                    attachment.AttachmentType = OrobourosInformation.AttachmentContent.Video;
                                 }
-                                else if (UniAssemblyInfo.IsImage(attachment.Name))
+                                else if (OrobourosInformation.IsImage(attachment.Name))
                                 {
-                                    attachment.AttachmentType = UniAssemblyInfo.AttachmentContent.Image;
+                                    attachment.AttachmentType = OrobourosInformation.AttachmentContent.Image;
                                 }
                                 else
                                 {
-                                    attachment.AttachmentType = UniAssemblyInfo.AttachmentContent.GenericFile;
+                                    attachment.AttachmentType = OrobourosInformation.AttachmentContent.GenericFile;
                                 }
 
                                 LoggingManager.WriteToDebugLog($"Downloading raw binary for attachment {attachment.Name}...");
