@@ -134,33 +134,7 @@ namespace Orobouros.PartyModule.Helpers
                                 file.URL = fileobj.Attributes["href"].Value;
                                 file.Name = StringManager.SanitizeFile(HttpUtility.UrlDecode(fileobj.Attributes["download"].Value));
                                 file.ParentPost = compiledPost;
-
-                                if (OrobourosInformation.IsVideo(file.Name))
-                                {
-                                    file.AttachmentType = OrobourosInformation.AttachmentContent.Video;
-                                }
-                                else if (OrobourosInformation.IsImage(file.Name))
-                                {
-                                    file.AttachmentType = OrobourosInformation.AttachmentContent.Image;
-                                }
-                                else
-                                {
-                                    file.AttachmentType = OrobourosInformation.AttachmentContent.GenericFile;
-                                }
-
-                                LoggingManager.WriteToDebugLog($"Downloading raw binary for file {file.Name}...");
-                                // Fetch file raw binary data
-                                HttpAPIAsset? fileRawDataAsset = HttpManager.GET(file.URL);
-                                if (!fileRawDataAsset.Successful || fileRawDataAsset.Errored)
-                                {
-                                    LoggingManager.WriteToDebugLog($"File data failed to be fetched! Status code: {fileRawDataAsset.ResponseCode}. This file has been skipped.");
-                                    continue;
-                                }
-
-                                LoggingManager.WriteToDebugLog("Converting raw file binary to stream...");
-                                // Convert to stream & package
-                                Stream fileRawData = fileRawDataAsset.Content.ReadAsStreamAsync().Result;
-                                file.Binary = fileRawData;
+                                file.AttachmentType = OrobourosInformation.FindAttachmentType(file.Name);
                                 compiledPost.Attachments.Add(file);
                             }
                         }
@@ -178,33 +152,7 @@ namespace Orobouros.PartyModule.Helpers
                                 attachment.URL = attachmentobj.Attributes["href"].Value;
                                 attachment.Name = StringManager.SanitizeFile(HttpUtility.UrlDecode(attachmentobj.Attributes["download"].Value));
                                 attachment.ParentPost = compiledPost;
-
-                                if (OrobourosInformation.IsVideo(attachment.Name))
-                                {
-                                    attachment.AttachmentType = OrobourosInformation.AttachmentContent.Video;
-                                }
-                                else if (OrobourosInformation.IsImage(attachment.Name))
-                                {
-                                    attachment.AttachmentType = OrobourosInformation.AttachmentContent.Image;
-                                }
-                                else
-                                {
-                                    attachment.AttachmentType = OrobourosInformation.AttachmentContent.GenericFile;
-                                }
-
-                                LoggingManager.WriteToDebugLog($"Downloading raw binary for attachment {attachment.Name}...");
-                                // Fetch file raw binary data
-                                HttpAPIAsset? attachmentRawDataAsset = HttpManager.GET(attachment.URL);
-                                if (!attachmentRawDataAsset.Successful || attachmentRawDataAsset.Errored)
-                                {
-                                    LoggingManager.WriteToDebugLog($"Attachment data failed to be fetched! Status code: {attachmentRawDataAsset.ResponseCode}. This attachment has been skipped.");
-                                    continue;
-                                }
-
-                                LoggingManager.WriteToDebugLog("Converting raw attachment binary to stream...");
-                                // Convert to stream & package
-                                Stream attachmentRawData = attachmentRawDataAsset.Content.ReadAsStreamAsync().Result;
-                                attachment.Binary = attachmentRawData;
+                                attachment.AttachmentType = OrobourosInformation.FindAttachmentType(attachment.Name);
                                 compiledPost.Attachments.Add(attachment);
                             }
                         }
