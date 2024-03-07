@@ -65,6 +65,14 @@ namespace Orobouros.PartyModule.Helpers
 
                         if (!postWebResponse.Successful || postWebResponse.Errored)
                         {
+                            if (postWebResponse.Errored)
+                            {
+                                LoggingManager.LogWarning($"Post with URL \"{compiledPost.URL}\" failed to fetch with exception {postWebResponse.Exception.Message}. This post has been skipped.");
+                            }
+                            if (!postWebResponse.Successful)
+                            {
+                                LoggingManager.LogWarning($"Post with URL \"{compiledPost.URL}\" failed to fetch with status code {postWebResponse.ResponseCode}. This post has been skipped.");
+                            }
                             continue;
                         }
 
@@ -170,7 +178,7 @@ namespace Orobouros.PartyModule.Helpers
                             // Don't add comment if containers aren't found
                             if (HeaderNode == null || BodyNode == null || FooterNode == null)
                             {
-                                LoggingManager.WriteToDebugLog("Comment had invalid HTML, skipping...");
+                                LoggingManager.LogWarning("Comment had invalid HTML, skipping...");
                                 continue;
                             }
 
@@ -182,7 +190,7 @@ namespace Orobouros.PartyModule.Helpers
                             // Don't add comment if information nodes aren't found
                             if (UsernameNode == null || DescriptionNode == null || DateNode == null)
                             {
-                                LoggingManager.WriteToDebugLog("Comment has no proper children, skipping...");
+                                LoggingManager.LogWarning("Comment has no proper children, skipping...");
                                 continue;
                             }
 
