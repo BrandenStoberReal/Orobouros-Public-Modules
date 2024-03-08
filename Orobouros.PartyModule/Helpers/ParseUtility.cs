@@ -29,8 +29,8 @@ namespace Orobouros.PartyModule.Helpers
                 {
                     LoggingManager.LogWarning($"Page Fetch Retry #{i}/5...");
                     Random rng = new Random();
-                    LoggingManager.LogWarning($"A page failed to fetch! Assuming this is throttling, waiting 4-5 seconds and retrying...");
-                    System.Threading.Thread.Sleep(rng.Next(4000, 5001));
+                    LoggingManager.LogWarning($"A page failed to fetch! Assuming this is throttling, waiting 6-7 seconds and retrying...");
+                    System.Threading.Thread.Sleep(rng.Next(6000, 7001));
                     asset = HttpManager.GET(creator.URL + $"?o={page * 50}");
                 }
                 else
@@ -90,8 +90,8 @@ namespace Orobouros.PartyModule.Helpers
                             {
                                 LoggingManager.LogWarning($"Post Fetch Retry #{i}/5...");
                                 Random rng = new Random();
-                                LoggingManager.LogWarning($"Post \"{compiledPost.URL}\" failed to fetch! Assuming this is throttling, waiting 3 seconds and retrying...");
-                                System.Threading.Thread.Sleep(rng.Next(4000, 5001)); // Sleep 3 seconds
+                                LoggingManager.LogWarning($"Post \"{compiledPost.URL}\" failed to fetch! Assuming this is throttling, waiting 6-7 seconds and retrying...");
+                                System.Threading.Thread.Sleep(rng.Next(6000, 7001)); // Sleep 3 seconds
                                 postWebResponse = HttpManager.GET(compiledPost.URL);
                             }
                             else
