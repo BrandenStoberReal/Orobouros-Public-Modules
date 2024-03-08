@@ -22,6 +22,17 @@ namespace Orobouros.PartyModule.Helpers
             var postUrls = new List<Post>();
             HttpAPIAsset asset = HttpManager.GET(creator.URL + $"?o={page * 50}");
 
+            // Handle ratelimiting
+            if (asset.ResponseCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                while (asset.ResponseCode == System.Net.HttpStatusCode.TooManyRequests)
+                {
+                    Random rng = new Random();
+                    System.Threading.Thread.Sleep(rng.Next(10000, 15000));
+                    asset = HttpManager.GET(creator.URL + $"?o={page * 50}");
+                }
+            }
+
             // Try to salvage any bad HTTP requests
             for (int i = 0; i < 5; i++)
             {
@@ -82,6 +93,17 @@ namespace Orobouros.PartyModule.Helpers
 
                         // Perform HTTP request
                         HttpAPIAsset? postWebResponse = HttpManager.GET(compiledPost.URL);
+
+                        // Handle ratelimiting
+                        if (postWebResponse.ResponseCode == System.Net.HttpStatusCode.TooManyRequests)
+                        {
+                            while (postWebResponse.ResponseCode == System.Net.HttpStatusCode.TooManyRequests)
+                            {
+                                Random rng = new Random();
+                                System.Threading.Thread.Sleep(rng.Next(10000, 15000));
+                                postWebResponse = HttpManager.GET(compiledPost.URL);
+                            }
+                        }
 
                         // Error handler, retries the request 5 times before giving up.
                         for (int i = 0; i < 5; i++)
