@@ -21,10 +21,29 @@ namespace Orobouros.PartyModule.Helpers
         {
             var postUrls = new List<Post>();
             HttpAPIAsset asset = HttpManager.GET(creator.URL + $"?o={page * 50}");
+
+            // Try to salvage any bad HTTP requests
+            for (int i = 0; i < 5; i++)
+            {
+                if (asset.Errored || asset.Successful == false)
+                {
+                    Random rng = new Random();
+                    LoggingManager.LogWarning($"A page failed to fetch! Assuming this is throttling, waiting 4-5 seconds and retrying...");
+                    System.Threading.Thread.Sleep(rng.Next(4000, 5001));
+                    asset = HttpManager.GET(creator.URL + $"?o={page * 50}");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            // Give up after 5 retries
             if (asset.Errored || asset.Successful == false)
             {
                 return null;
             }
+
             LoggingManager.WriteToDebugLog("Page asset returned code " + asset.ResponseCode);
             LoggingManager.WriteToDebugLog("Creator URL: " + creator.URL);
 
@@ -63,6 +82,23 @@ namespace Orobouros.PartyModule.Helpers
                         // Perform HTTP request
                         HttpAPIAsset? postWebResponse = HttpManager.GET(compiledPost.URL);
 
+                        // Error handler, retries the request 5 times before giving up.
+                        for (int i = 0; i < 5; i++)
+                        {
+                            if (!postWebResponse.Successful || postWebResponse.Errored)
+                            {
+                                Random rng = new Random();
+                                LoggingManager.LogWarning($"Post \"{compiledPost.URL}\" failed to fetch! Assuming this is throttling, waiting 3 seconds and retrying...");
+                                System.Threading.Thread.Sleep(rng.Next(4000, 5001)); // Sleep 3 seconds
+                                postWebResponse = HttpManager.GET(compiledPost.URL);
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        // Handle errors
                         if (!postWebResponse.Successful || postWebResponse.Errored)
                         {
                             if (postWebResponse.Errored)
