@@ -49,6 +49,12 @@ namespace Orobouros.PartyModule
             var Posts = new List<Post>();
 
             Creator creator = new Creator(parameters.URL);
+
+            if (creator.Errored || !creator.Successful)
+            {
+                return null;
+            }
+
             LoggingManager.LogInformation("Creator: " + creator.Name);
 
             // Page data vars
