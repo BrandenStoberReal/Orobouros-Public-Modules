@@ -8,7 +8,7 @@ using Attachment = Orobouros.Tools.Web.Attachment;
 
 namespace Orobouros.PartyModule
 {
-    [OrobourosModule("Kemono/Coomer Module", "6b2f454a-55a5-43d5-ae2d-54fde6dc3c7d", "1.0.0.1", "Module for scraping kemono and coomer content.")]
+    [OrobourosModule("Kemono/Coomer Module", "6b2f454a-55a5-43d5-ae2d-54fde6dc3c7d", "1.0.0.2", "Module for scraping kemono and coomer content.")]
     public class MainModule
     {
         // Websites supported by this module. You can either use loose domains ("google.com") or

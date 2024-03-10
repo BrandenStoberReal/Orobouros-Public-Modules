@@ -35,6 +35,29 @@ public class Creator : HttpAPIAsset
         // HTTP init
         var response = HttpManager.GET(url);
 
+        if (!response.Successful)
+        {
+            this.Successful = false;
+            this.Errored = false;
+            this.ResponseCode = response.ResponseCode;
+            return;
+        }
+
+        if (response.Errored)
+        {
+            this.Errored = true;
+            this.Successful = false;
+            this.ResponseCode = response.ResponseCode;
+            return;
+        }
+
+        if (response.Successful && !response.Errored)
+        {
+            this.Successful = true;
+            this.Errored = false;
+            this.ResponseCode = response.ResponseCode;
+        }
+
         // Load HTML
         var responseDocument = new HtmlDocument();
         responseDocument.LoadHtml(response.Content.ReadAsStringAsync().Result);
