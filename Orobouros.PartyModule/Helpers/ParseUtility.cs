@@ -38,7 +38,7 @@ namespace Orobouros.PartyModule.Helpers
             {
                 if (asset.Errored || asset.Successful == false)
                 {
-                    LoggingManager.LogWarning($"Page Fetch Retry #{i}/5...");
+                    LoggingManager.LogWarning($"Page Fetch Retry #{i+1}/5...");
                     Random rng = new Random();
                     LoggingManager.LogWarning($"A page failed to fetch! Assuming this is throttling, waiting 6-7 seconds and retrying...");
                     System.Threading.Thread.Sleep(rng.Next(6000, 7001));
