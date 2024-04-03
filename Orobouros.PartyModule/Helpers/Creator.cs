@@ -1,17 +1,17 @@
-﻿using HtmlAgilityPack;
+﻿using System.Drawing;
+using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 using Orobouros.Bases;
 using Orobouros.Managers;
-using System.Drawing;
-using System.Text.RegularExpressions;
 
 namespace Orobouros.PartyModule;
 
 public class Creator : HttpAPIAsset
 {
     /// <summary>
-    /// List of supported services
+    ///     List of supported services
     /// </summary>
-    private List<string> servicesList = new List<string>
+    private readonly List<string> servicesList = new()
     {
         "fanbox",
         "patreon",
@@ -25,7 +25,7 @@ public class Creator : HttpAPIAsset
     };
 
     /// <summary>
-    /// Constructor
+    ///     Constructor
     /// </summary>
     /// <param name="url">Creator's party site URL</param>
     public Creator(string url)
@@ -33,29 +33,29 @@ public class Creator : HttpAPIAsset
         URL = url; // Simple variable setting
 
         // HTTP init
-        var response = HttpManager.GET(url);
+        var response = HttpManager.GET(url, httpVersion: HttpManager.HttpVersionNumber.Http3);
 
         if (!response.Successful)
         {
-            this.Successful = false;
-            this.Errored = false;
-            this.ResponseCode = response.ResponseCode;
+            Successful = false;
+            Errored = false;
+            ResponseCode = response.ResponseCode;
             return;
         }
 
         if (response.Errored)
         {
-            this.Errored = true;
-            this.Successful = false;
-            this.ResponseCode = response.ResponseCode;
+            Errored = true;
+            Successful = false;
+            ResponseCode = response.ResponseCode;
             return;
         }
 
         if (response.Successful && !response.Errored)
         {
-            this.Successful = true;
-            this.Errored = false;
-            this.ResponseCode = response.ResponseCode;
+            Successful = true;
+            Errored = false;
+            ResponseCode = response.ResponseCode;
         }
 
         // Load HTML
@@ -69,65 +69,57 @@ public class Creator : HttpAPIAsset
 
         // Identify service
         if (servicesList.Any(url.Contains))
-        {
             Service = servicesList.Find(url.Contains);
-        }
         else
-        {
             // Unsupported service
             Service = null;
-        }
 
         // Fetch domain URL
         var reg = new Regex("https://[A-Za-z0-9]+\\.su");
         var regMatch = reg.Match(url);
         if (regMatch.Success)
-        {
             PartyDomain = regMatch.Value;
-        }
         else
-        {
             PartyDomain = null;
-        }
     }
 
     /// <summary>
-    /// Human-readable name of the creator
+    ///     Human-readable name of the creator
     /// </summary>
     public string? Name { get; set; }
 
     /// <summary>
-    /// The creator's party site URL
+    ///     The creator's party site URL
     /// </summary>
     public string URL { get; private set; }
 
     /// <summary>
-    /// The archival service used by the creator
+    ///     The archival service used by the creator
     /// </summary>
     public string? Service { get; private set; }
 
     /// <summary>
-    /// Whether the creator's domain is from coomer or kemono
+    ///     Whether the creator's domain is from coomer or kemono
     /// </summary>
     public string? PartyDomain { get; private set; }
 
     /// <summary>
-    /// Creator's landing page source code
+    ///     Creator's landing page source code
     /// </summary>
     public HtmlDocument LandingPage { get; }
 
     /// <summary>
-    /// Cache variable for GetProfilePicture()
+    ///     Cache variable for GetProfilePicture()
     /// </summary>
-    private Image? ProfilePicture { get; set; } = null;
+    private Image? ProfilePicture { get; set; }
 
     /// <summary>
-    /// Cache variable for GetProfileBanner()
+    ///     Cache variable for GetProfileBanner()
     /// </summary>
-    private Image? ProfileBanner { get; set; } = null;
+    private Image? ProfileBanner { get; } = null;
 
     /// <summary>
-    /// Fetches the total number of posts a creator has on their service
+    ///     Fetches the total number of posts a creator has on their service
     /// </summary>
     /// <returns></returns>
     public int? GetTotalPosts()
@@ -140,7 +132,7 @@ public class Creator : HttpAPIAsset
     }
 
     /// <summary>
-    /// Fetches a creator's profile picture
+    ///     Fetches a creator's profile picture
     /// </summary>
     /// <returns></returns>
     public Image? GetProfilePicture()
@@ -148,41 +140,40 @@ public class Creator : HttpAPIAsset
         if (ProfilePicture == null)
         {
             // Fetch the actual image URL
-            var imageNode = LandingPage.DocumentNode.Descendants().FirstOrDefault(x => x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("icons"));
+            var imageNode = LandingPage.DocumentNode.Descendants().FirstOrDefault(x =>
+                x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("icons"));
 
             // HTTP Weird Stuff
-            HttpAPIAsset profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value);
+            var profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value,
+                httpVersion: HttpManager.HttpVersionNumber.Http3);
             if (!profilePicData.Errored)
             {
                 using var ms = profilePicData.Content.ReadAsStreamAsync().Result;
                 ProfilePicture = Image.FromStream(ms);
                 return Image.FromStream(ms);
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
-        else
-        {
-            return ProfilePicture;
-        }
+
+        return ProfilePicture;
     }
 
     /// <summary>
-    /// Fetches a creator's profile picture URL
+    ///     Fetches a creator's profile picture URL
     /// </summary>
     /// <returns></returns>
     public string? GetProfilePictureURL()
     {
         // Fetch the actual image URL
-        var imageNode = LandingPage.DocumentNode.Descendants().FirstOrDefault(x => x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("icons"));
+        var imageNode = LandingPage.DocumentNode.Descendants().FirstOrDefault(x =>
+            x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("icons"));
 
         return "https:" + imageNode.Attributes["src"].Value;
     }
 
     /// <summary>
-    /// Fetches a creator's profile banner
+    ///     Fetches a creator's profile banner
     /// </summary>
     /// <returns></returns>
     public Image? GetProfileBanner()
@@ -190,35 +181,34 @@ public class Creator : HttpAPIAsset
         if (ProfileBanner == null)
         {
             // Fetch the actual image URL
-            var imageNode = LandingPage.DocumentNode.Descendants().FirstOrDefault(x => x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("banners"));
+            var imageNode = LandingPage.DocumentNode.Descendants().FirstOrDefault(x =>
+                x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("banners"));
 
             // HTTP Weird Stuff
-            HttpAPIAsset profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value);
+            var profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value,
+                httpVersion: HttpManager.HttpVersionNumber.Http3);
             if (!profilePicData.Errored)
             {
                 using var ms = profilePicData.Content.ReadAsStreamAsync().Result;
                 ProfilePicture = Image.FromStream(ms);
                 return Image.FromStream(ms);
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
-        else
-        {
-            return ProfileBanner;
-        }
+
+        return ProfileBanner;
     }
 
     /// <summary>
-    /// Fetches a creator's profile banner URL
+    ///     Fetches a creator's profile banner URL
     /// </summary>
     /// <returns></returns>
     public string? GetProfileBannerURL()
     {
         // Fetch the actual image URL
-        var imageNode = LandingPage.DocumentNode.Descendants().FirstOrDefault(x => x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("banners"));
+        var imageNode = LandingPage.DocumentNode.Descendants().FirstOrDefault(x =>
+            x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("banners"));
 
         return "https:" + imageNode.Attributes["src"].Value;
     }
