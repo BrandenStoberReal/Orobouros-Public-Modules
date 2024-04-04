@@ -37,15 +37,6 @@ public static class ParseUtility
         var postWebResponse =
             HttpManager.GET(compiledPost.URL);
 
-        // Handle ratelimiting
-        if (postWebResponse.ResponseCode == HttpStatusCode.TooManyRequests)
-            while (postWebResponse.ResponseCode == HttpStatusCode.TooManyRequests)
-            {
-                var rng = new Random();
-                Thread.Sleep(rng.Next(10000, 15000));
-                postWebResponse = HttpManager.GET(compiledPost.URL);
-            }
-
         // Error handler, retries the request 5 times before giving up.
         for (var i = 0; i < 5; i++)
             if (!postWebResponse.Successful || postWebResponse.Errored)
