@@ -7,7 +7,7 @@ using static Orobouros.OrobourosInformation;
 
 namespace Orobouros.PartyModule;
 
-[OrobourosModule("Kemono/Coomer Module", "6b2f454a-55a5-43d5-ae2d-54fde6dc3c7d", "1.0.0.4",
+[OrobourosModule("Kemono/Coomer Module", "6b2f454a-55a5-43d5-ae2d-54fde6dc3c7d", "1.0.0.5",
     "Module for scraping kemono and coomer content.")]
 public class MainModule
 {

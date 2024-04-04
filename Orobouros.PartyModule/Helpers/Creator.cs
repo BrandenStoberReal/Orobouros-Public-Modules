@@ -11,7 +11,7 @@ public class Creator : HttpAPIAsset
     /// <summary>
     ///     List of supported services
     /// </summary>
-    private readonly List<string> servicesList = new()
+    private readonly List<string> _servicesList = new()
     {
         "fanbox",
         "patreon",
@@ -31,9 +31,10 @@ public class Creator : HttpAPIAsset
     public Creator(string url)
     {
         URL = url; // Simple variable setting
+        TotalPosts = GetTotalPosts();
 
         // HTTP init
-        var response = HttpManager.GET(url, httpVersion: HttpManager.HttpVersionNumber.Http3);
+        var response = HttpManager.GET(url);
 
         if (!response.Successful)
         {
@@ -68,8 +69,8 @@ public class Creator : HttpAPIAsset
         Name = creatorNameNode?.InnerText;
 
         // Identify service
-        if (servicesList.Any(url.Contains))
-            Service = servicesList.Find(url.Contains);
+        if (_servicesList.Any(url.Contains))
+            Service = _servicesList.Find(url.Contains);
         else
             // Unsupported service
             Service = null;
@@ -99,14 +100,19 @@ public class Creator : HttpAPIAsset
     public string? Service { get; private set; }
 
     /// <summary>
-    ///     Whether the creator's domain is from coomer or kemono
+    ///     Whether the creator's instance is from Coomer.su or Kemono.su
     /// </summary>
     public string? PartyDomain { get; private set; }
 
     /// <summary>
-    ///     Creator's landing page source code
+    ///     Creator's landing page source code. This is the HTML displayed upon first clicking a creator's banner.
     /// </summary>
     public HtmlDocument LandingPage { get; }
+
+    /// <summary>
+    ///     Total posts the creator has on their respective page.
+    /// </summary>
+    public int? TotalPosts { get; }
 
     /// <summary>
     ///     Cache variable for GetProfilePicture()
@@ -118,11 +124,14 @@ public class Creator : HttpAPIAsset
     /// </summary>
     private Image? ProfileBanner { get; } = null;
 
+
+    #region Methods
+
     /// <summary>
     ///     Fetches the total number of posts a creator has on their service
     /// </summary>
     /// <returns></returns>
-    public int? GetTotalPosts()
+    private int? GetTotalPosts()
     {
         // Posts integer is ambiguous and fetches all posts
         var totalPostsNode = HtmlManager.FetchNodeByXPath(LandingPage, "/html/body/div[2]/main/section/div[1]/small");
@@ -144,8 +153,7 @@ public class Creator : HttpAPIAsset
                 x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("icons"));
 
             // HTTP Weird Stuff
-            var profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value,
-                httpVersion: HttpManager.HttpVersionNumber.Http3);
+            var profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value);
             if (!profilePicData.Errored)
             {
                 using var ms = profilePicData.Content.ReadAsStreamAsync().Result;
@@ -185,8 +193,7 @@ public class Creator : HttpAPIAsset
                 x.HasClass("fancy-image__image") && x.Name == "img" && x.Attributes["src"].Value.Contains("banners"));
 
             // HTTP Weird Stuff
-            var profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value,
-                httpVersion: HttpManager.HttpVersionNumber.Http3);
+            var profilePicData = HttpManager.GET("https:" + imageNode.Attributes["src"].Value);
             if (!profilePicData.Errored)
             {
                 using var ms = profilePicData.Content.ReadAsStreamAsync().Result;
@@ -212,4 +219,6 @@ public class Creator : HttpAPIAsset
 
         return "https:" + imageNode.Attributes["src"].Value;
     }
+
+    #endregion
 }
