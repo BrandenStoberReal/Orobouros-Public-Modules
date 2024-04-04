@@ -50,7 +50,7 @@ public static class ParseUtility
         for (var i = 0; i < 5; i++)
             if (!postWebResponse.Successful || postWebResponse.Errored)
             {
-                LoggingManager.LogWarning($"Post Fetch Retry #{i}/5...");
+                LoggingManager.LogWarning($"Post Fetch Retry #{i + 1}/5...");
                 var rng = new Random();
                 LoggingManager.LogWarning(
                     $"Post \"{compiledPost.URL}\" failed to fetch! Assuming this is throttling, waiting 6-7 seconds and retrying...");
