@@ -11,6 +11,8 @@ namespace Orobouros.PartyModule.Helpers;
 
 public static class ParseUtility
 {
+    private static readonly Regex AlphanumericChars = new("[^A-Za-z]");
+
     /// <summary>
     ///     Fetches a post from the specified post URL.
     /// </summary>
@@ -85,7 +87,8 @@ public static class ParseUtility
         var postIDFinder = new Regex("/post/(.*)");
         var postIDMatch = postIDFinder.Match(compiledPost.URL);
         var postId = postIDMatch.Groups[1].Value;
-        compiledPost.Id = long.Parse(postId).ToString();
+        var sanitizedId = AlphanumericChars.Replace(postId, "");
+        compiledPost.Id = long.Parse(sanitizedId).ToString();
 
         LoggingManager.WriteToDebugLog("Scraping post title...");
         // Fetch post title

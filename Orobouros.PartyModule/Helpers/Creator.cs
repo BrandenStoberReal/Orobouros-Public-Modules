@@ -31,7 +31,6 @@ public class Creator : HttpAPIAsset
     public Creator(string url)
     {
         URL = url; // Simple variable setting
-        TotalPosts = GetTotalPosts();
 
         // HTTP init
         var response = HttpManager.GET(url);
@@ -82,6 +81,9 @@ public class Creator : HttpAPIAsset
             PartyDomain = regMatch.Value;
         else
             PartyDomain = null;
+
+        // Populate total posts
+        TotalPosts = GetTotalPosts();
     }
 
     /// <summary>
@@ -134,9 +136,14 @@ public class Creator : HttpAPIAsset
     private int? GetTotalPosts()
     {
         // Posts integer is ambiguous and fetches all posts
-        var totalPostsNode = HtmlManager.FetchNodeByXPath(LandingPage, "/html/body/div[2]/main/section/div[1]/small");
-        if (totalPostsNode != null)
-            return int.Parse(totalPostsNode.InnerText.Replace("Showing 1 - 50 of ", ""));
+        var paginatorContainer = HtmlManager.SelectNodesByClass(LandingPage, "paginator", "div").FirstOrDefault();
+        if (paginatorContainer != null)
+        {
+            var totalPostsNode = HtmlManager.FetchChildNodes(paginatorContainer)
+                .FirstOrDefault(x => x.Name == "small");
+            if (totalPostsNode != null) return int.Parse(totalPostsNode.InnerText.Replace("Showing 1 - 50 of ", ""));
+        }
+
         return null;
     }
 
