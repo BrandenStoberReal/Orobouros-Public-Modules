@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{78EDFB16-D459-4A17-B996-7B7EA78B6F69}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		version.json = version.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orobouros.PartyModule.Tests", "Orobouros.PartyModule.Tests\Orobouros.PartyModule.Tests.csproj", "{0D5DFE90-C47B-483E-AC26-F5A1CBF1EE7A}"

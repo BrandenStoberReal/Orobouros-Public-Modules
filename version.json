@@ -1,0 +1,10 @@
+{
+  "modules": [
+    {
+      "name": "PartyModule",
+      "version": "1.0.0.5",
+      "url": "https://github.com/BrandenStoberReal/Orobouros-Public-Modules/releases/latest/download/Orobouros.PartyModule.dll"
+    }
+  ],
+  "inherit": true
+}
