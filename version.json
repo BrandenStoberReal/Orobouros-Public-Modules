@@ -3,7 +3,8 @@
     {
       "name": "PartyModule",
       "version": "1.0.0.5",
-      "url": "https://github.com/BrandenStoberReal/Orobouros-Public-Modules/releases/latest/download/Orobouros.PartyModule.dll"
+      "url": "https://github.com/BrandenStoberReal/Orobouros-Public-Modules/releases/latest/download/Orobouros.PartyModule.dll",
+      "guid": "6b2f454a-55a5-43d5-ae2d-54fde6dc3c7d"
     }
   ],
   "inherit": true
