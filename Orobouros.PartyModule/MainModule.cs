@@ -79,7 +79,6 @@ public class MainModule
                 {
                     LoggingManager.LogError(
                         "[SINGLE-PAGE PARSER] A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
-                    return null;
                 }
 
                 Posts = Posts.Concat(postsList).ToList();
@@ -97,7 +96,6 @@ public class MainModule
                     {
                         LoggingManager.LogError(
                             "[MULTI-SINGLE-PAGE PARSER] A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
-                        error = true;
                         break;
                     }
 
