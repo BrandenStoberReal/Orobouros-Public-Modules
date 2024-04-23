@@ -13,7 +13,7 @@ public class MainModule
 {
     // Websites supported by this module. You can either use loose domains ("google.com") or
     // full URLs ("https://google.com/search?q=test") depending on your code. Website URL to be
-    // scraped will be checked if the URL includes this URL at all.
+    // scraped will be checked if the URL includes this text at all.
     [ModuleSites]
     public List<string> SupportedWebsites { get; set; } = new()
     {
@@ -34,7 +34,7 @@ public class MainModule
 
     // Module methods.
 
-    // Initializer method. Used to run code when the module loads. Always run on a new thread.
+    // Initializer method. Used to run code when the module loads. Always runs on a new thread.
     [ModuleInit]
     public void Initialize()
     {
@@ -45,11 +45,13 @@ public class MainModule
     [ModuleScrape]
     public ModuleData? Scrape(ScrapeParameters parameters)
     {
+        // Initialize classes
         var data = new ModuleData();
         var Posts = new List<Post>();
 
         var creator = new Creator(parameters.URL);
 
+        // Couldn't fetch creator
         if (creator.Errored || !creator.Successful) return null;
 
         LoggingManager.LogInformation("Creator: " + creator.Name);
@@ -60,8 +62,10 @@ public class MainModule
         var leftoverPosts = pagesAndPosts.LeftoverPosts;
         var singlePage = pagesAndPosts.IsSinglePage;
 
+        #region Handle each data type requested
+
         // Subposts media type
-        if (parameters.RequestedContent.Count == 1 && parameters.RequestedContent.First() == ModuleContent.Subposts)
+        if (parameters.RequestedContent.Contains(ModuleContent.Subposts))
         {
             LoggingManager.WriteToDebugLog("Subposts requested!");
 
@@ -84,7 +88,6 @@ public class MainModule
             else
             {
                 // Used for everything else
-                var error = false;
                 for (var i = 0; i < pages; i++)
                 {
                     LoggingManager.LogInformation("Scraping Page #" + (i + 1) + "/" + pages + "...");
@@ -100,8 +103,6 @@ public class MainModule
 
                     Posts = Posts.Concat(postList).ToList();
                 }
-
-                if (error) return null;
             }
 
             // Partial page scraper, used for scraping the final page from the series
@@ -114,7 +115,6 @@ public class MainModule
                 {
                     LoggingManager.LogError(
                         "[FINAL-PAGE PARSER] A page failed to scrape! Are you IP banned, or are the partysites undergoing repairs? Scrape aborted.");
-                    return null;
                 }
 
                 Posts = Posts.Concat(leftoverPosties).ToList();
@@ -126,9 +126,6 @@ public class MainModule
                 var packagedData = new ProcessedScrapeData(ModuleContent.Subposts, post.URL, post);
                 data.Content.Add(packagedData);
             }
-
-            // Return subposts and do not continue
-            return data;
         }
 
         // Video parsing
@@ -138,12 +135,12 @@ public class MainModule
             if (parameters.ScrapeInstances == -1)
             {
                 foreach (var post in parameters.Subposts)
-                foreach (var filey in post.Attachments)
-                    if (filey.AttachmentType == AttachmentContent.Video)
-                    {
-                        var packagedAttachment = new ProcessedScrapeData(ModuleContent.Videos, filey.URL, filey);
-                        data.Content.Add(packagedAttachment);
-                    }
+                    foreach (var filey in post.Attachments)
+                        if (filey.AttachmentType == AttachmentContent.Video)
+                        {
+                            var packagedAttachment = new ProcessedScrapeData(ModuleContent.Videos, filey.URL, filey);
+                            data.Content.Add(packagedAttachment);
+                        }
             }
             else
             {
@@ -169,12 +166,12 @@ public class MainModule
             if (parameters.ScrapeInstances == -1)
             {
                 foreach (var post in parameters.Subposts)
-                foreach (var filey in post.Attachments)
-                    if (filey.AttachmentType == AttachmentContent.Image)
-                    {
-                        var packagedAttachment = new ProcessedScrapeData(ModuleContent.Images, filey.URL, filey);
-                        data.Content.Add(packagedAttachment);
-                    }
+                    foreach (var filey in post.Attachments)
+                        if (filey.AttachmentType == AttachmentContent.Image)
+                        {
+                            var packagedAttachment = new ProcessedScrapeData(ModuleContent.Images, filey.URL, filey);
+                            data.Content.Add(packagedAttachment);
+                        }
             }
             else
             {
@@ -200,12 +197,12 @@ public class MainModule
             if (parameters.ScrapeInstances == -1)
             {
                 foreach (var post in parameters.Subposts)
-                foreach (var filey in post.Attachments)
-                    if (filey.AttachmentType == AttachmentContent.GenericFile)
-                    {
-                        var packagedAttachment = new ProcessedScrapeData(ModuleContent.Files, filey.URL, filey);
-                        data.Content.Add(packagedAttachment);
-                    }
+                    foreach (var filey in post.Attachments)
+                        if (filey.AttachmentType == AttachmentContent.GenericFile)
+                        {
+                            var packagedAttachment = new ProcessedScrapeData(ModuleContent.Files, filey.URL, filey);
+                            data.Content.Add(packagedAttachment);
+                        }
             }
             else
             {
@@ -223,6 +220,8 @@ public class MainModule
                 }
             }
         }
+
+        #endregion Handle each data type requested
 
         return data;
     }
